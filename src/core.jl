@@ -23,7 +23,7 @@ type ELM{T<:BaseType}
     end
 end
 
-function train!{T<:BaseType, S<:Union{BaseType,Int}}(net::ELM{T}, X::Matrix{T}, Y::Matrix{S};
+function train!{T<:BaseType, S<:Union{BaseType,Integer}}(net::ELM{T}, X::Matrix{T}, Y::Matrix{S};
                              tm::TrainingMethods=Batch(),
                              init::Initializers=Uniform())
     assert(size(Y,2) == size(X,2))
@@ -51,8 +51,8 @@ function postprocess{T<:BaseType}(Y::Matrix{T}, elmtype::Regression)
     return Y
 end
 
-function preprocess{T<:BaseType, S<:Int}(X::Matrix{T}, Y::Matrix{S}, elmtype::Classification)
-    assert(maximum(Y) < elmtype.nclass, "Class labels must be in {0,1,...,nclass-1}.")
+function preprocess{T<:BaseType, S<:Integer}(X::Matrix{T}, Y::Matrix{S}, elmtype::Classification)
+    @assert(maximum(Y) < elmtype.nclass, "Class labels must be in {0,1,...,nclass-1}.")
     if elmtype.nclass == 2
         Yc = zeros(T, 1, size(Y,2))
         for i=1:size(Y,2)
