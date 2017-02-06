@@ -10,7 +10,7 @@ type Uniform <: Initializers
     end
 end
 
-function orthonormalize{T<:AbstractFloat}(X::Array{Union{T,Complex{T}}})
+function orthonormalize{T<:AbstractFloat}(X::Union{Array{T},Array{Complex{T}}})
     U,S,V = svd(X)
     return U*transpose(V)
 end
