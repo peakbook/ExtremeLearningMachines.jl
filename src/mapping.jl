@@ -8,12 +8,12 @@ struct Qubit     <: MappingFunctions end
 struct HyperbolicTangent <: MappingFunctions end
 
 
-function mapping(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, mf::MappingFunctions) where {T<:BaseType}
-    return mf.(W*X .+ b)
+function mapping(W::AbstractMatrix{T}, b::AbstractMatrix{T}, X::AbstractMatrix{T}, mf::MappingFunctions) where {T<:BaseType}
+    return map(x->mapfunc(x, mf), W*X .+ b)
 end
 
-function mapping(W::Vector{T}, b::T, X::Vector{T}, mf::MappingFunctions) where {T<:BaseType}
-    return mf.(dot(conj(W),X) + b)
+function mapping(W::AbstractVector{T}, b::T, X::AbstractVector{T}, mf::MappingFunctions) where {T<:BaseType}
+    return map(x-mapfunc(x, mf), dot(conj(W),X) + b)
 end
 
 

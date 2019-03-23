@@ -10,12 +10,12 @@ struct Uniform <: Initializers
     end
 end
 
-function orthonormalize(X::Union{Array{T},Array{Complex{T}}}) where {T<:AbstractFloat}
+function orthonormalize(X::Union{AbstractArray{T},AbstractArray{Complex{T}}}) where {T<:AbstractFloat}
     U,S,V = svd(X)
     return U*transpose(V)
 end
 
-function orthonormalize(X::Array{Quaternion{T}}) where {T<:AbstractFloat}
+function orthonormalize(X::AbstractArray{Quaternion{T}}) where {T<:AbstractFloat}
     Xc = Quaternions.equiv(X)
     U,S,V = svd(Xc)
     return Quaternions.equiv(U*transpose(V))
