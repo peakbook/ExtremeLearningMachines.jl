@@ -10,13 +10,13 @@ struct BatchCML2 <: TrainingMethods
     lambda::AbstractFloat
 end
 
-function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+function train_core(W::AbstractMatrix{T}, b::AbstractMatrix{T}, X::AbstractMatrix{T}, Y::AbstractMatrix{T},
                     mf::MappingFunctions, tm::Batch) where {T<:BaseType}
     H = mapping(W, b, X, mf)
     return Y*pinv(H);
 end
 
-function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+function train_core(W::AbstractMatrix{T}, b::AbstractMatrix{T}, X::AbstractMatrix{T}, Y::AbstractMatrix{T},
                     mf::MappingFunctions, tm::BatchL2) where {T<:BaseType}
     H = mapping(W, b, X, mf)
     L = size(H,1)
@@ -29,19 +29,19 @@ function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
     end
 end
 
-function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+function train_core(W::AbstractMatrix{T}, b::AbstractMatrix{T}, X::AbstractMatrix{T}, Y::AbstractMatrix{T},
                     mf::MappingFunctions, tm::BatchCM) where {T<:BaseType}
     A, B = cormat(W, b, X, Y, mf)
     return B*pinv(A)'
 end
 
-function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+function train_core(W::AbstractMatrix{T}, b::AbstractMatrix{T}, X::AbstractMatrix{T}, Y::AbstractMatrix{T},
                     mf::MappingFunctions, tm::BatchCML2) where {T<:BaseType}
     A, B = cormat(W, b, X, Y, mf)
     return B*pinv(A+tm.lambda*eye(T,size(A,1)))'
 end
 
-function cormat(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+function cormat(W::AbstractMatrix{T}, b::AbstractMatrix{T}, X::AbstractMatrix{T}, Y::AbstractMatrix{T},
                 mf::MappingFunctions) where {T<:BaseType}
     P = size(X,2)
     Nh = size(W, 1)
