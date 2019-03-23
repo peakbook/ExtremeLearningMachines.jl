@@ -1,9 +1,10 @@
 module ExtremeLearningMachines
 
-using JLD
+#  using JLD
+using LinearAlgebra
 using Quaternions
-using Convex
-using ECOS
+#  using Convex
+#  using ECOS
 
 export ELM
 export Regression, Classification

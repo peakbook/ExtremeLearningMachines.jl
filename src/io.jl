@@ -9,4 +9,3 @@ function load(fname::AbstractString)
         read(file, "machine")
     end
 end
-

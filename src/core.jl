@@ -1,10 +1,10 @@
-abstract ELMTypes
-type Regression <: ELMTypes end
-type Classification <: ELMTypes
+abstract type ELMTypes end
+struct Regression <: ELMTypes end
+struct Classification <: ELMTypes
     nclass::Int
 end
 
-type ELM{T<:BaseType}
+struct ELM{T<:BaseType}
     W::Matrix{T}
     b::Matrix{T}
     beta::Matrix{T}
@@ -12,9 +12,9 @@ type ELM{T<:BaseType}
     mf::MappingFunctions
     elmtype::ELMTypes
 
-    function ELM(L::Int;
+    function ELM{T}(L::Int;
                  mf::MappingFunctions=Sigmoid(),
-                 elmtype::ELMTypes=Regression())
+                 elmtype::ELMTypes=Regression()) where T<:BaseType
         net = new()
         net.L = L
         net.mf = mf
@@ -23,9 +23,9 @@ type ELM{T<:BaseType}
     end
 end
 
-function train!{T<:BaseType, S<:Union{BaseType,Integer}}(net::ELM{T}, X::Matrix{T}, Y::Matrix{S};
-                             tm::TrainingMethods=Batch(),
-                             init::Initializers=Uniform())
+function train!(net::ELM{T}, X::Matrix{T}, Y::Matrix{S};
+                tm::TrainingMethods=Batch(),
+                init::Initializers=Uniform()) where {T<:BaseType, S<:Union{BaseType,Integer}}
     assert(size(Y,2) == size(X,2))
 
     net.W = rand_arr(T, (net.L, size(X,1)), init)
@@ -37,21 +37,21 @@ function train!{T<:BaseType, S<:Union{BaseType,Integer}}(net::ELM{T}, X::Matrix{
     return net
 end
 
-function predict{T<:BaseType}(net::ELM{T}, X::Matrix{T})
+function predict(net::ELM{T}, X::Matrix{T}) where {T<:BaseType}
     H = mapping(net.W, net.b, X, net.mf)
     Y = net.beta*H
     return postprocess(Y, net.elmtype)
 end
 
-function preprocess{T<:BaseType}(X::Matrix{T}, Y::Matrix{T}, elmtype::Regression)
+function preprocess(X::Matrix{T}, Y::Matrix{T}, elmtype::Regression) where {T<:BaseType}
     return X, Y
 end
 
-function postprocess{T<:BaseType}(Y::Matrix{T}, elmtype::Regression)
+function postprocess(Y::Matrix{T}, elmtype::Regression) where {T<:BaseType}
     return Y
 end
 
-function preprocess{T<:BaseType, S<:Integer}(X::Matrix{T}, Y::Matrix{S}, elmtype::Classification)
+function preprocess(X::Matrix{T}, Y::Matrix{S}, elmtype::Classification) where {T<:BaseType, S<:Integer}
     @assert(maximum(Y) < elmtype.nclass, "Class labels must be in {0,1,...,nclass-1}.")
     if elmtype.nclass == 2
         Yc = zeros(T, 1, size(Y,2))
@@ -67,7 +67,7 @@ function preprocess{T<:BaseType, S<:Integer}(X::Matrix{T}, Y::Matrix{S}, elmtype
     return X, Yc
 end
 
-function postprocess{T<:BaseType}(Yc::Matrix{T}, elmtype::Classification)
+function postprocess(Yc::Matrix{T}, elmtype::Classification) where {T<:BaseType}
     Y = zeros(Int, 1, size(Yc,2))
     if elmtype.nclass == 2
         for i=1:size(Yc,2)
@@ -80,4 +80,3 @@ function postprocess{T<:BaseType}(Yc::Matrix{T}, elmtype::Classification)
     end
     return Y
 end
-

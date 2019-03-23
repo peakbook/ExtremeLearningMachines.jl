@@ -1,26 +1,26 @@
-abstract TrainingMethods
+abstract type TrainingMethods end
 
-type Batch <: TrainingMethods end
-type BatchL2 <: TrainingMethods
+struct Batch <: TrainingMethods end
+struct BatchL2 <: TrainingMethods
     lambda::AbstractFloat
 end
-type BatchL1 <: TrainingMethods
-    lambda::AbstractFloat
-end
-
-type BatchCM <: TrainingMethods end
-type BatchCML2 <: TrainingMethods 
+struct BatchL1 <: TrainingMethods
     lambda::AbstractFloat
 end
 
-function train_core{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                    mf::MappingFunctions, tm::Batch)
+struct BatchCM <: TrainingMethods end
+struct BatchCML2 <: TrainingMethods
+    lambda::AbstractFloat
+end
+
+function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+                    mf::MappingFunctions, tm::Batch) where {T<:BaseType}
     H = mapping(W, b, X, mf)
     return Y*pinv(H);
 end
 
-function train_core{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                    mf::MappingFunctions, tm::BatchL2)
+function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+                    mf::MappingFunctions, tm::BatchL2) where {T<:BaseType}
     H = mapping(W, b, X, mf)
     L = size(H,1)
     N = size(H,2)
@@ -32,8 +32,8 @@ function train_core{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Ma
     end
 end
 
-function train_core{T<:AbstractFloat}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                    mf::MappingFunctions, tm::BatchL1)
+function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+                    mf::MappingFunctions, tm::BatchL1) where {T<:AbstractFloat}
     H = mapping(W, b, X, mf)
     beta = Variable(size(Y,1), size(W,1))
     problem = minimize(0.5*norm(beta*H-Y,2)^2 + tm.lambda * norm(beta,1))
@@ -41,20 +41,20 @@ function train_core{T<:AbstractFloat}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, 
     return beta.value
 end
 
-function train_core{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                                 mf::MappingFunctions, tm::BatchCM)
+function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+                    mf::MappingFunctions, tm::BatchCM) where {T<:BaseType}
     A, B = cormat(W, b, X, Y, mf)
     return B*pinv(A)'
 end
 
-function train_core{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                                 mf::MappingFunctions, tm::BatchCML2)
+function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+                    mf::MappingFunctions, tm::BatchCML2) where {T<:BaseType}
     A, B = cormat(W, b, X, Y, mf)
     return B*pinv(A+tm.lambda*eye(T,size(A,1)))'
 end
 
-function cormat{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                             mf::MappingFunctions)
+function cormat(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
+                mf::MappingFunctions) where {T<:BaseType}
     P = size(X,2)
     Nh = size(W, 1)
     No = size(Y, 1)
@@ -72,4 +72,3 @@ function cormat{T<:BaseType}(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix
 
     return A, B
 end
-
