@@ -22,16 +22,16 @@ function orthonormalize(X::AbstractArray{Quaternion{T}}) where {T<:AbstractFloat
 end
 
 function rand_arr(T::Type{S}, dim::Tuple, init::Uniform) where {S<:AbstractFloat}
-    M = rand(T, dim)*T(init.max-init.min) .+ T(init.min)
+    M = rand(T, dim)*S(init.max-init.min) .+ T(init.min)
     return init.ortho ? orthonormalize(M) : M
 end
 
 function rand_arr(T::Type{Complex{S}}, dim::Tuple, init::Uniform) where {S<:AbstractFloat}
-    M = rand(T, dim)*T(init.max-init.min) .+ T(init.min, init.min)
+    M = rand(T, dim)*S(init.max-init.min) .+ T(init.min, init.min)
     return init.ortho ? orthonormalize(M) : M
 end
 
 function rand_arr(T::Type{Quaternion{S}}, dim::Tuple, init::Uniform) where {S<:AbstractFloat}
-    M = rand(T, dim)*T(init.max-init.min) .+ T(init.min, init.min, init.min, init.min)
+    M = rand(T, dim)*S(init.max-init.min) .+ T(init.min, init.min, init.min, init.min)
     return init.ortho ? orthonormalize(M) : M
 end
