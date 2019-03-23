@@ -17,27 +17,27 @@ function mapping(W::AbstractVector{T}, b::T, X::AbstractVector{T}, mf::MappingFu
 end
 
 
-function mapfunc(x::T, mf::Sigmoid) where {T<:AbstractFloat}
+function mapfunc(x::T, mf::Sigmoid) where {T<:BaseType}
     return one(T)/(one(T)+exp(-x))
 end
 
-function mapfunc(x::T, mf::HardLimit) where {T<:AbstractFloat}
+function mapfunc(x::T, mf::HardLimit) where {T<:BaseType}
     return x >= zero(T) ? one(T) : zero(T)
 end
 
-function mapfunc(x::T, mf::ReLU) where {T<:AbstractFloat}
+function mapfunc(x::T, mf::ReLU) where {T<:BaseType}
     return x >= zero(T) ? x : zero(T)
 end
 
-function mapfunc(x::T, mf::Cosine) where {T<:AbstractFloat}
+function mapfunc(x::T, mf::Cosine) where {T<:BaseType}
     return cos(x)
 end
 
-function mapfunc(x::T, mf::Qubit) where {T<:AbstractFloat}
+function mapfunc(x::T, mf::Qubit) where {T<:BaseType}
     return sin(0.5*pi*x)^2
 end
 
-function mapfunc(x::T, mf::HyperbolicTangent) where {T<:AbstractFloat}
+function mapfunc(x::T, mf::HyperbolicTangent) where {T<:BaseType}
     v = exp(-x)
     return (one(T)-v)/(one(T)+v)
 end
