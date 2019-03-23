@@ -4,9 +4,6 @@ struct Batch <: TrainingMethods end
 struct BatchL2 <: TrainingMethods
     lambda::AbstractFloat
 end
-struct BatchL1 <: TrainingMethods
-    lambda::AbstractFloat
-end
 
 struct BatchCM <: TrainingMethods end
 struct BatchCML2 <: TrainingMethods
@@ -30,15 +27,6 @@ function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
     else
         return Y*(pinv(tH*H + tm.lambda*eye(T,N))*tH)
     end
-end
-
-function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},
-                    mf::MappingFunctions, tm::BatchL1) where {T<:AbstractFloat}
-    H = mapping(W, b, X, mf)
-    beta = Variable(size(Y,1), size(W,1))
-    problem = minimize(0.5*norm(beta*H-Y,2)^2 + tm.lambda * norm(beta,1))
-    solve!(problem, ECOSSolver(verbose=false))
-    return beta.value
 end
 
 function train_core(W::Matrix{T}, b::Matrix{T}, X::Matrix{T}, Y::Matrix{T},

@@ -1,16 +1,14 @@
 module ExtremeLearningMachines
 
-#  using JLD
+using JLD
 using LinearAlgebra
 using Quaternions
-#  using Convex
-#  using ECOS
 
 export ELM
 export Regression, Classification
 export train!, predict
 export Sigmoid, HardLimit, ReLU, Cosine, Qubit, HyperbolicTangent
-export Batch, BatchCM, BatchL2, BatchCML2, BatchL1
+export Batch, BatchCM, BatchL2, BatchCML2
 export Uniform
 export save, load
 
